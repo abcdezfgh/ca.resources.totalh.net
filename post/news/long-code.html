@@ -361,7 +361,30 @@
         </div>
 		<div id="popup-overlay">
   <div id="popup-box">
-    <p>Redirecting in <span id="countdown">5</span> seconds...</p>
+    <svg id="countdown-svg" width="120" height="120" viewBox="0 0 120 120">
+      <circle
+        cx="60"
+        cy="60"
+        r="54"
+        stroke="#444"
+        stroke-width="12"
+        fill="none"
+      />
+      <circle
+        id="progress-circle"
+        cx="60"
+        cy="60"
+        r="54"
+        stroke="#f00"
+        stroke-width="12"
+        fill="none"
+        stroke-linecap="round"
+        transform="rotate(-90 60 60)"
+        stroke-dasharray="339.292"
+        stroke-dashoffset="0"
+      />
+    </svg>
+    <div id="countdown-text">5</div>
     <button id="accept-btn">X</button>
   </div>
 </div>
@@ -380,10 +403,20 @@
     padding: 20px;
     border-radius: 8px;
     text-align: center;
-    width: 100%;
-    max-width: 350px;
+    width: 140px;
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
     font-family: Arial, sans-serif;
+  }
+
+  #countdown-svg {
+    display: block;
+    margin: 0 auto 15px auto;
+  }
+
+  #countdown-text {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
   }
 
   #accept-btn {
@@ -394,7 +427,7 @@
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 15px;
+    padding: 5px 10px;
     cursor: pointer;
     font-size: 16px;
   }
@@ -406,14 +439,28 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    let countdown = 5;
-    const countdownEl = document.getElementById("countdown");
+    const duration = 5; // seconds
+    let timeLeft = duration;
+    const countdownText = document.getElementById("countdown-text");
+    const progressCircle = document.getElementById("progress-circle");
+
+    const radius = 54;
+    const circumference = 2 * Math.PI * radius;
+    progressCircle.style.strokeDasharray = circumference;
+    progressCircle.style.strokeDashoffset = 0;
+
     const interval = setInterval(() => {
-      countdown--;
-      countdownEl.textContent = countdown;
-      if (countdown === 0) {
+      timeLeft -= 1;
+      countdownText.textContent = timeLeft;
+
+      // Calculate offset for stroke-dashoffset
+      // We want stroke-dashoffset to go from 0 to circumference clockwise
+      const offset = circumference * (timeLeft / duration);
+      progressCircle.style.strokeDashoffset = offset;
+
+      if (timeLeft <= 0) {
         clearInterval(interval);
-        window.location.href = "https://example.com"; // Change this to your target URL
+        window.location.href = "https://example.com"; // your redirect URL here
       }
     }, 1000);
 
@@ -423,6 +470,7 @@
     });
   });
 </script>
+
 
         <!-- Footer Menu End -->
         <!-- Footer Bottom Start -->
